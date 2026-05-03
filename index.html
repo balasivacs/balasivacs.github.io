@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Balasiva | Cybersecurity Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #00ff88;
+    --cyan: #00e5ff;
+    --dark: #020c06;
+    --card: #040f08;
+    --border: rgba(0,255,136,0.2);
+    --text: #b0ffd4;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--dark);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    width: 16px; height: 16px;
+    border: 2px solid var(--green);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.1s;
+    mix-blend-mode: difference;
+  }
+  .cursor-dot {
+    width: 4px; height: 4px;
+    background: var(--green);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%,-50%);
+  }
+
+  /* Matrix canvas */
+  #matrix {
+    position: fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    z-index: 0;
+    opacity: 0.04;
+    pointer-events: none;
+  }
+
+  /* Scanline overlay */
+  body::after {
+    content:'';
+    position: fixed;
+    top:0; left:0; right:0; bottom:0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,136,0.015) 2px, rgba(0,255,136,0.015) 4px);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  section { position: relative; z-index: 2; }
+
+  /* NAV */
+  nav {
+    position: fixed; top:0; left:0; right:0;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 16px 40px;
+    background: rgba(2,12,6,0.85);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    z-index: 100;
+  }
+  .logo {
+    font-family: 'Orbitron', monospace;
+    font-weight: 900;
+    font-size: 1.1rem;
+    color: var(--green);
+    letter-spacing: 3px;
+    text-shadow: 0 0 20px var(--green);
+  }
+  .logo span { color: var(--cyan); }
+  nav ul { list-style:none; display:flex; gap:28px; }
+  nav ul li a {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--text);
+    text-decoration: none;
+    letter-spacing: 2px;
+    transition: color 0.3s;
+    position: relative;
+  }
+  nav ul li a::after {
+    content:'';
+    position:absolute; bottom:-4px; left:0; right:0; height:1px;
+    background: var(--green);
+    transform: scaleX(0);
+    transition: transform 0.3s;
+  }
+  nav ul li a:hover { color: var(--green); }
+  nav ul li a:hover::after { transform: scaleX(1); }
+
+  /* HERO */
+  #hero {
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    padding: 100px 20px 60px;
+    position: relative;
+  }
+  .hero-tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--green);
+    letter-spacing: 5px;
+    border: 1px solid var(--border);
+    padding: 6px 18px;
+    margin-bottom: 24px;
+    animation: fadeUp 0.8s ease both;
+    display: inline-block;
+  }
+  .hero-name {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(2.5rem, 7vw, 5.5rem);
+    font-weight: 900;
+    line-height: 1;
+    color: #fff;
+    text-shadow: 0 0 40px rgba(0,255,136,0.4);
+    animation: fadeUp 0.8s 0.2s ease both;
+    margin-bottom: 10px;
+  }
+  .hero-name .green { color: var(--green); }
+  .hero-role {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: clamp(0.8rem, 2vw, 1rem);
+    color: var(--cyan);
+    letter-spacing: 3px;
+    margin-bottom: 30px;
+    animation: fadeUp 0.8s 0.4s ease both;
+    min-height: 1.5em;
+  }
+  .hero-desc {
+    max-width: 520px;
+    font-size: 1.05rem;
+    color: rgba(176,255,212,0.65);
+    line-height: 1.7;
+    margin-bottom: 40px;
+    animation: fadeUp 0.8s 0.6s ease both;
+  }
+  .hero-btns {
+    display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;
+    animation: fadeUp 0.8s 0.8s ease both;
+  }
+  .btn {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 2px;
+    padding: 12px 28px;
+    text-decoration: none;
+    border: 1px solid var(--green);
+    color: var(--green);
+    position: relative;
+    overflow: hidden;
+    transition: color 0.3s;
+    cursor: none;
+  }
+  .btn::before {
+    content:'';
+    position:absolute; inset:0;
+    background: var(--green);
+    transform: translateX(-100%);
+    transition: transform 0.3s;
+    z-index: -1;
+  }
+  .btn:hover { color: var(--dark); }
+  .btn:hover::before { transform: translateX(0); }
+  .btn.outline2 { border-color: var(--cyan); color: var(--cyan); }
+  .btn.outline2::before { background: var(--cyan); }
+
+  /* glitch line */
+  .glitch-line {
+    width: 120px; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--green), transparent);
+    margin: 50px auto 0;
+    animation: pulse 2s infinite;
+  }
+
+  /* ABOUT */
+  #about {
+    padding: 100px 40px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .section-header {
+    display: flex; align-items: center; gap: 16px;
+    margin-bottom: 50px;
+  }
+  .section-num {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--green);
+    letter-spacing: 3px;
+  }
+  .section-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 2px;
+  }
+  .section-line {
+    flex:1; height:1px;
+    background: linear-gradient(90deg, var(--border), transparent);
+  }
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: start;
+  }
+  @media(max-width:700px){ .about-grid{ grid-template-columns:1fr; } }
+  .about-text p {
+    font-size: 1.05rem;
+    color: rgba(176,255,212,0.75);
+    line-height: 1.8;
+    margin-bottom: 16px;
+  }
+  .about-text p strong { color: var(--green); }
+  .info-list { list-style:none; margin-top: 20px; }
+  .info-list li {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.78rem;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    display: flex; gap: 12px;
+    color: var(--text);
+  }
+  .info-list li span:first-child { color: var(--green); min-width: 100px; }
+
+  /* SKILLS */
+  #skills {
+    padding: 100px 40px;
+    background: rgba(0,255,136,0.015);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .skills-inner { max-width: 1100px; margin: 0 auto; }
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+  }
+  .skill-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, transform 0.3s;
+    animation: fadeUp 0.6s ease both;
+  }
+  .skill-card:hover {
+    border-color: var(--green);
+    transform: translateY(-4px);
+  }
+  .skill-card::before {
+    content:'';
+    position:absolute; top:0; left:0; right:0; height:2px;
+    background: linear-gradient(90deg, transparent, var(--green), transparent);
+    transform: scaleX(0);
+    transition: transform 0.4s;
+  }
+  .skill-card:hover::before { transform: scaleX(1); }
+  .skill-icon { font-size: 1.5rem; margin-bottom: 10px; }
+  .skill-name {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.82rem;
+    color: var(--green);
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+  .skill-level {
+    font-size: 0.72rem;
+    color: rgba(176,255,212,0.5);
+    letter-spacing: 1px;
+  }
+  .skill-bar {
+    height: 2px;
+    background: rgba(0,255,136,0.15);
+    margin-top: 10px;
+    position: relative;
+    overflow: hidden;
+  }
+  .skill-bar-fill {
+    height: 100%;
+    background: var(--green);
+    box-shadow: 0 0 8px var(--green);
+    animation: barGrow 1.5s ease both;
+  }
+  @keyframes barGrow { from{width:0} }
+
+  /* PROJECTS */
+  #projects {
+    padding: 100px 40px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+  }
+  .project-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s, border-color 0.3s;
+    animation: fadeUp 0.7s ease both;
+  }
+  .project-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--cyan);
+  }
+  .project-card::after {
+    content:'';
+    position:absolute; bottom:0; left:0; right:0; height:2px;
+    background: linear-gradient(90deg, var(--cyan), var(--green));
+    transform: scaleX(0);
+    transition: transform 0.4s;
+  }
+  .project-card:hover::after { transform: scaleX(1); }
+  .project-tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--cyan);
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+  }
+  .project-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.95rem;
+    color: #fff;
+    font-weight: 700;
+    margin-bottom: 12px;
+    letter-spacing: 1px;
+  }
+  .project-desc {
+    font-size: 0.92rem;
+    color: rgba(176,255,212,0.65);
+    line-height: 1.7;
+    margin-bottom: 20px;
+  }
+  .project-tech {
+    display: flex; flex-wrap: wrap; gap: 8px;
+  }
+  .tech-tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    padding: 3px 10px;
+    border: 1px solid rgba(0,255,136,0.25);
+    color: var(--green);
+    letter-spacing: 1px;
+  }
+  .project-links {
+    display: flex; gap: 16px; margin-top: 16px;
+  }
+  .project-link {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--cyan);
+    text-decoration: none;
+    letter-spacing: 1px;
+    transition: color 0.3s;
+  }
+  .project-link:hover { color: var(--green); }
+
+  /* CERTS */
+  #certs {
+    padding: 100px 40px;
+    background: rgba(0,255,136,0.015);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .certs-inner { max-width: 1100px; margin: 0 auto; }
+  .certs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+  }
+  .cert-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 22px;
+    text-align: center;
+    transition: border-color 0.3s, transform 0.3s;
+    animation: fadeUp 0.6s ease both;
+  }
+  .cert-card:hover {
+    border-color: var(--green);
+    transform: translateY(-4px);
+  }
+  .cert-icon { font-size: 2rem; margin-bottom: 12px; }
+  .cert-name {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--green);
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+  .cert-issuer {
+    font-size: 0.8rem;
+    color: rgba(176,255,212,0.5);
+  }
+
+  /* CONTACT */
+  #contact {
+    padding: 100px 40px;
+    max-width: 700px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .contact-text {
+    font-size: 1.05rem;
+    color: rgba(176,255,212,0.65);
+    line-height: 1.8;
+    margin-bottom: 40px;
+  }
+  .contact-email {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.1rem;
+    color: var(--green);
+    text-decoration: none;
+    border-bottom: 1px solid var(--green);
+    padding-bottom: 4px;
+    letter-spacing: 2px;
+    transition: text-shadow 0.3s;
+  }
+  .contact-email:hover { text-shadow: 0 0 20px var(--green); }
+  .social-links {
+    display: flex; gap: 20px; justify-content: center; margin-top: 40px;
+  }
+  .social-link {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    color: var(--text);
+    text-decoration: none;
+    padding: 10px 22px;
+    border: 1px solid var(--border);
+    transition: border-color 0.3s, color 0.3s;
+  }
+  .social-link:hover { border-color: var(--green); color: var(--green); }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 30px;
+    border-top: 1px solid var(--border);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    color: rgba(176,255,212,0.3);
+    letter-spacing: 2px;
+    position: relative; z-index: 2;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity:0; transform: translateY(30px); }
+    to { opacity:1; transform: translateY(0); }
+  }
+  @keyframes pulse {
+    0%,100% { opacity:0.4; } 50% { opacity:1; }
+  }
+  @keyframes blink {
+    0%,100%{opacity:1} 50%{opacity:0}
+  }
+  .cursor-blink {
+    display: inline-block;
+    width: 2px; height: 1em;
+    background: var(--cyan);
+    margin-left: 4px;
+    vertical-align: text-bottom;
+    animation: blink 1s infinite;
+  }
+
+  /* scroll reveal */
+  .reveal { opacity:0; transform: translateY(40px); transition: opacity 0.7s, transform 0.7s; }
+  .reveal.visible { opacity:1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<canvas id="matrix"></canvas>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-dot" id="cursorDot"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">BALA<span>SIVA</span></div>
+  <ul>
+    <li><a href="#about">ABOUT</a></li>
+    <li><a href="#skills">SKILLS</a></li>
+    <li><a href="#projects">PROJECTS</a></li>
+    <li><a href="#certs">CERTS</a></li>
+    <li><a href="#contact">CONTACT</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-tag">// CYBERSECURITY PORTFOLIO</div>
+  <div class="hero-name"><span class="green">BALA</span>SIVA</div>
+  <div class="hero-role" id="typewriter"></div>
+  <p class="hero-desc">
+    Aspiring Penetration Tester & SOC Analyst from Tamil Nadu, India. 
+    Passionate about breaking things ethically, finding vulnerabilities, and defending digital infrastructure.
+  </p>
+  <div class="hero-btns">
+    <a href="#projects" class="btn">VIEW PROJECTS</a>
+    <a href="#contact" class="btn outline2">CONTACT ME</a>
+  </div>
+  <div class="glitch-line"></div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-header reveal">
+    <span class="section-num">01 //</span>
+    <h2 class="section-title">ABOUT ME</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="about-grid">
+    <div class="about-text reveal">
+      <p>I'm <strong>Balasiva</strong>, a B.Sc Computer Science student at <strong>Madurai Kamaraj University (SBK College)</strong>, Tamil Nadu. I specialize in ethical hacking, penetration testing, and web application security.</p>
+      <p>Currently training at <strong>Innovel Training Institute, Madurai</strong> and actively practicing on platforms like TryHackMe and DVWA. My goal is to become a <strong>Junior Penetration Tester</strong> and Bug Bounty Hunter.</p>
+      <p>I believe in <strong>learning by breaking</strong> — understanding how attacks work is the best way to build defenses.</p>
+    </div>
+    <div class="reveal">
+      <ul class="info-list">
+        <li><span>LOCATION</span><span>Tamil Nadu, India</span></li>
+        <li><span>DEGREE</span><span>B.Sc Computer Science</span></li>
+        <li><span>COLLEGE</span><span>SBK College, MKU</span></li>
+        <li><span>TRAINING</span><span>Innovel Institute, Madurai</span></li>
+        <li><span>EMAIL</span><span>balasivacs13@gmail.com</span></li>
+        <li><span>GITHUB</span><span>github.com/Balasiva</span></li>
+        <li><span>STATUS</span><span style="color:var(--green)">▶ OPEN TO WORK</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="skills-inner">
+    <div class="section-header reveal">
+      <span class="section-num">02 //</span>
+      <h2 class="section-title">SKILLS & TOOLS</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="skills-grid">
+      <div class="skill-card reveal" style="animation-delay:0.1s">
+        <div class="skill-icon">🐉</div>
+        <div class="skill-name">KALI LINUX</div>
+        <div class="skill-level">INTERMEDIATE</div>
+        <div class="skill-bar"><div class="skill-bar-fill" style="width:75%"></div></div>
+      </div>
+      <div class="skill-card reveal" style="animation-delay:0.15s">
+        <div class="skill-icon">🔫</div>
+        <div class="skill-name">BURP SUITE</div>
+        <div class="skill-level">INTERMEDIATE</div>
+        <div class="skill-bar"><div class="skill-bar-fill" style="width:70%"></div></div>
+      </div>
+      <div class="skill-card reveal" style="animation-delay:0.2s">
+        <div class="skill-icon">🗺️</div>
+        <div class="skill-name">NMAP</div>
+        <div class="skill-level">INTERMEDIATE</div>
+        <div class="skill-bar"><div class="skill-bar-fill" style="width:72%"></div></div>
+      </div>
+      <div class="skill-card reveal" style="animation-delay:0.25s">
+        <div class="skill-icon">🦈</div>
+        <div class="skill-name">WIRESHARK</div>
+        <div class="skill-level">BEGINNER+</div>
+        <div class="skill-bar"><div class="skill-bar-fill" style="width:60%"></div></div>
+      </div>
+      <div class="skill-card reveal" style="animation-delay:0.3s">
+        <div class="skill-icon">💀</div>
+        <div class="skill-name">METASPLOIT</div>
+        <div class="skill-level">BEGINNER+</div>
+        <div class="skill-bar"><div class="skill-bar-fill" style="width:58%"></div></div>
+      </div>
+      <div class="skill-card reveal" style="animation-delay:0.35s">
+        <div class="skill-icon">🐍</div>
+        <div class="skill-name">PYTHON</div>
+        <div class="skill-level">INTERMEDIATE</div>
+        <div class="skill-bar"><div class="skill-bar-fill" style="width:68%"></div></div>
+      </div>
+      <div class="skill-card reveal" style="animation-delay:0.4s">
+        <div class="skill-icon">💉</div>
+        <div class="skill-name">SQL INJECTION</div>
+        <div class="skill-level">LEARNING</div>
+        <div class="skill-bar"><div class="skill-bar-fill" style="width:62%"></div></div>
+      </div>
+      <div class="skill-card reveal" style="animation-delay:0.45s">
+        <div class="skill-icon">⚡</div>
+        <div class="skill-name">XSS / IDOR</div>
+        <div class="skill-level">LEARNING</div>
+        <div class="skill-bar"><div class="skill-bar-fill" style="width:58%"></div></div>
+      </div>
+      <div class="skill-card reveal" style="animation-delay:0.5s">
+        <div class="skill-icon">🖥️</div>
+        <div class="skill-name">BASH SCRIPTING</div>
+        <div class="skill-level">INTERMEDIATE</div>
+        <div class="skill-bar"><div class="skill-bar-fill" style="width:65%"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="section-header reveal">
+    <span class="section-num">03 //</span>
+    <h2 class="section-title">PROJECTS</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="projects-grid">
+    <div class="project-card reveal" style="animation-delay:0.1s">
+      <div class="project-tag">// PYTHON · RECON</div>
+      <div class="project-title">NETWORK RECONNAISSANCE TOOLKIT</div>
+      <p class="project-desc">A Python-based automated network reconnaissance tool that performs port scanning, host discovery, service enumeration, and generates detailed recon reports.</p>
+      <div class="project-tech">
+        <span class="tech-tag">PYTHON</span>
+        <span class="tech-tag">NMAP</span>
+        <span class="tech-tag">SOCKET</span>
+        <span class="tech-tag">BASH</span>
+      </div>
+      <div class="project-links">
+        <a href="https://github.com/Balasiva" class="project-link">[ GITHUB → ]</a>
+      </div>
+    </div>
+    <div class="project-card reveal" style="animation-delay:0.2s">
+      <div class="project-tag">// PYTHON · WEB SECURITY</div>
+      <div class="project-title">WEB APP VULNERABILITY SCANNER</div>
+      <p class="project-desc">Automated web application vulnerability scanner that detects common OWASP Top 10 issues including SQLi, XSS, and broken access control weaknesses.</p>
+      <div class="project-tech">
+        <span class="tech-tag">PYTHON</span>
+        <span class="tech-tag">REQUESTS</span>
+        <span class="tech-tag">OWASP</span>
+        <span class="tech-tag">BEAUTIFULSOUP</span>
+      </div>
+      <div class="project-links">
+        <a href="https://github.com/Balasiva" class="project-link">[ GITHUB → ]</a>
+      </div>
+    </div>
+    <div class="project-card reveal" style="animation-delay:0.3s">
+      <div class="project-tag">// PRACTICE · DVWA</div>
+      <div class="project-title">DVWA PENETRATION TESTING LAB</div>
+      <p class="project-desc">Local penetration testing lab setup using DVWA on Kali Linux. Practiced SQLi, XSS, CSRF, File Upload, and Command Injection vulnerabilities with Burp Suite.</p>
+      <div class="project-tech">
+        <span class="tech-tag">KALI LINUX</span>
+        <span class="tech-tag">BURP SUITE</span>
+        <span class="tech-tag">DVWA</span>
+        <span class="tech-tag">MYSQL</span>
+      </div>
+      <div class="project-links">
+        <a href="#" class="project-link">[ WRITEUP → ]</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CERTS -->
+<section id="certs">
+  <div class="certs-inner">
+    <div class="section-header reveal">
+      <span class="section-num">04 //</span>
+      <h2 class="section-title">CERTIFICATIONS</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="certs-grid">
+      <div class="cert-card reveal" style="animation-delay:0.1s">
+        <div class="cert-icon">🌐</div>
+        <div class="cert-name">NETWORKING BASICS</div>
+        <div class="cert-issuer">Cisco NetAcad</div>
+      </div>
+      <div class="cert-card reveal" style="animation-delay:0.15s">
+        <div class="cert-icon">🔐</div>
+        <div class="cert-name">PRE-SECURITY PATH</div>
+        <div class="cert-issuer">TryHackMe</div>
+      </div>
+      <div class="cert-card reveal" style="animation-delay:0.2s">
+        <div class="cert-icon">🛡️</div>
+        <div class="cert-name">CYBER SECURITY 101</div>
+        <div class="cert-issuer">TryHackMe</div>
+      </div>
+      <div class="cert-card reveal" style="animation-delay:0.25s">
+        <div class="cert-icon">⚔️</div>
+        <div class="cert-name">ETHICAL HACKING</div>
+        <div class="cert-issuer">Innovel Institute</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-header reveal" style="justify-content:center; text-align:center; flex-direction:column; gap:8px;">
+    <span class="section-num">05 //</span>
+    <h2 class="section-title">GET IN TOUCH</h2>
+  </div>
+  <p class="contact-text reveal">
+    Looking for a Junior Penetration Tester or SOC Analyst? Let's connect! I'm actively seeking opportunities to apply my skills and grow in the cybersecurity field.
+  </p>
+  <div class="reveal">
+    <a href="mailto:balasivacs13@gmail.com" class="contact-email">balasivacs13@gmail.com</a>
+  </div>
+  <div class="social-links reveal">
+    <a href="https://github.com/Balasiva" class="social-link" target="_blank">GITHUB</a>
+    <a href="#" class="social-link">LINKEDIN</a>
+    <a href="https://tryhackme.com" class="social-link" target="_blank">TRYHACKME</a>
+  </div>
+</section>
+
+<footer>
+  &copy; 2026 BALASIVA — BUILT WITH PASSION & KALI LINUX 🐉
+</footer>
+
+<script>
+// Matrix rain
+const canvas = document.getElementById('matrix');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+const cols = Math.floor(canvas.width / 20);
+const drops = Array(cols).fill(1);
+const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモ';
+function drawMatrix() {
+  ctx.fillStyle = 'rgba(2,12,6,0.05)';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle = '#00ff88';
+  ctx.font = '14px Share Tech Mono';
+  drops.forEach((y,i) => {
+    const char = chars[Math.floor(Math.random()*chars.length)];
+    ctx.fillText(char, i*20, y*20);
+    if(y*20 > canvas.height && Math.random() > 0.975) drops[i] = 0;
+    drops[i]++;
+  });
+}
+setInterval(drawMatrix, 50);
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+
+// Cursor
+const cursor = document.getElementById('cursor');
+const cursorDot = document.getElementById('cursorDot');
+let mx=0, my=0, cx=0, cy=0;
+document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; cursorDot.style.left=mx+'px'; cursorDot.style.top=my+'px'; });
+function animCursor() {
+  cx += (mx-cx)*0.15; cy += (my-cy)*0.15;
+  cursor.style.left=(cx-8)+'px'; cursor.style.top=(cy-8)+'px';
+  requestAnimationFrame(animCursor);
+}
+animCursor();
+
+// Typewriter
+const roles = ['PENETRATION TESTER', 'SOC ANALYST', 'BUG BOUNTY HUNTER', 'ETHICAL HACKER', 'CTF PLAYER'];
+let ri=0, ci=0, del=false;
+const tw = document.getElementById('typewriter');
+function type() {
+  const cur = roles[ri];
+  if(!del) {
+    tw.innerHTML = cur.slice(0,ci+1)+'<span class="cursor-blink"></span>';
+    ci++;
+    if(ci===cur.length){ del=true; setTimeout(type,2000); return; }
+  } else {
+    tw.innerHTML = cur.slice(0,ci-1)+'<span class="cursor-blink"></span>';
+    ci--;
+    if(ci===0){ del=false; ri=(ri+1)%roles.length; }
+  }
+  setTimeout(type, del?60:100);
+}
+type();
+
+// Scroll reveal
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
