@@ -193,6 +193,52 @@
     animation: pulse 2s infinite;
   }
 
+  /* HERO layout with photo above name */
+  .hero-photo-frame {
+    width: 200px;
+    height: 240px;
+    position: relative;
+    border: 2px solid var(--green);
+    padding: 8px;
+    background: var(--card);
+    box-shadow: 0 0 50px rgba(0,255,136,0.25), inset 0 0 20px rgba(0,255,136,0.05);
+    margin: 0 auto 24px;
+    animation: fadeUp 0.8s 0.1s ease both;
+  }
+  .hero-photo-frame::before,
+  .hero-photo-frame::after {
+    content:'';
+    position:absolute;
+    width: 22px; height: 22px;
+    border: 2px solid var(--cyan);
+  }
+  .hero-photo-frame::before { top:-2px; left:-2px; border-right:none; border-bottom:none; }
+  .hero-photo-frame::after { bottom:-2px; right:-2px; border-left:none; border-top:none; }
+  .hero-photo {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    filter: grayscale(15%) contrast(1.05);
+    display: block;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--dark);
+    border: 1px solid var(--green);
+    padding: 6px 16px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 2px;
+    color: var(--green);
+    margin-top: 18px;
+  }
+  .hero-badge .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 8px var(--green);
+    animation: pulse 1.5s infinite;
+  }
+
   /* ABOUT */
   #about {
     padding: 100px 40px;
@@ -306,6 +352,50 @@
     animation: barGrow 1.5s ease both;
   }
   @keyframes barGrow { from{width:0} }
+
+  /* SERVICES */
+  #services {
+    padding: 100px 40px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px;
+  }
+  .service-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 32px 26px;
+    position: relative;
+    transition: transform 0.3s, border-color 0.3s;
+    animation: fadeUp 0.7s ease both;
+  }
+  .service-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--green);
+  }
+  .service-num {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--cyan);
+    letter-spacing: 2px;
+    margin-bottom: 14px;
+  }
+  .service-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 1rem;
+    color: #fff;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 14px;
+  }
+  .service-desc {
+    font-size: 0.92rem;
+    color: rgba(176,255,212,0.65);
+    line-height: 1.7;
+  }
 
   /* PROJECTS */
   #projects {
@@ -425,7 +515,7 @@
   /* CONTACT */
   #contact {
     padding: 100px 40px;
-    max-width: 700px;
+    max-width: 900px;
     margin: 0 auto;
     text-align: center;
   }
@@ -446,6 +536,45 @@
     transition: text-shadow 0.3s;
   }
   .contact-email:hover { text-shadow: 0 0 20px var(--green); }
+
+  .contact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-top: 44px;
+    text-align: left;
+  }
+  .contact-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 20px 22px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    text-decoration: none;
+    transition: border-color 0.3s, transform 0.3s;
+    animation: fadeUp 0.6s ease both;
+  }
+  .contact-card:hover {
+    border-color: var(--green);
+    transform: translateY(-4px);
+  }
+  .contact-icon { font-size: 1.4rem; }
+  .contact-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--cyan);
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+  }
+  .contact-value {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text);
+    word-break: break-word;
+  }
+  .contact-card:hover .contact-value { color: var(--green); }
   .social-links {
     display: flex; gap: 20px; justify-content: center; margin-top: 40px;
   }
@@ -496,6 +625,45 @@
   /* scroll reveal */
   .reveal { opacity:0; transform: translateY(40px); transition: opacity 0.7s, transform 0.7s; }
   .reveal.visible { opacity:1; transform: translateY(0); }
+
+  /* MOBILE RESPONSIVE */
+  @media(max-width: 700px) {
+    nav { padding: 14px 18px; }
+    .logo { font-size: 0.95rem; }
+    nav ul { gap: 14px; overflow-x: auto; -ms-overflow-style: none; scrollbar-width: none; }
+    nav ul::-webkit-scrollbar { display: none; }
+    nav ul li a { font-size: 0.65rem; letter-spacing: 1px; white-space: nowrap; }
+
+    #hero { padding: 90px 20px 50px; }
+    .hero-photo-frame { width: 160px; height: 190px; }
+    .hero-desc { font-size: 0.95rem; }
+    .hero-btns { gap: 12px; }
+    .btn { padding: 10px 20px; font-size: 0.7rem; }
+
+    #about, #services, #skills, #projects, #certs, #contact {
+      padding: 60px 20px;
+    }
+    .section-title { font-size: 1.25rem; }
+
+    .skills-grid, .projects-grid, .services-grid, .certs-grid, .contact-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .contact-card { padding: 16px 18px; }
+    footer { padding: 22px 16px; font-size: 0.62rem; }
+  }
+
+  @media(max-width: 380px) {
+    .hero-name { font-size: 2.1rem; }
+    .hero-photo-frame { width: 130px; height: 160px; }
+  }
+
+  /* Disable custom cursor on touch devices */
+  @media (hover: none) and (pointer: coarse) {
+    body { cursor: auto; }
+    .cursor, .cursor-dot { display: none; }
+    .btn, a { cursor: pointer; }
+  }
 </style>
 </head>
 <body>
@@ -506,9 +674,10 @@
 
 <!-- NAV -->
 <nav>
-  <div class="logo">BALA<span>SIVA</span></div>
+  <div class="logo">&gt;_<span>root</span></div>
   <ul>
     <li><a href="#about">ABOUT</a></li>
+    <li><a href="#services">SERVICES</a></li>
     <li><a href="#skills">SKILLS</a></li>
     <li><a href="#projects">PROJECTS</a></li>
     <li><a href="#certs">CERTS</a></li>
@@ -519,7 +688,11 @@
 <!-- HERO -->
 <section id="hero">
   <div class="hero-tag">// CYBERSECURITY PORTFOLIO</div>
+  <div class="hero-photo-frame">
+    <img src="assets/profile.jpg" alt="Balasiva" class="hero-photo">
+  </div>
   <div class="hero-name"><span class="green">BALA</span>SIVA</div>
+  <div class="hero-badge"><span class="dot"></span>OPEN TO WORK</div>
   <div class="hero-role" id="typewriter"></div>
   <p class="hero-desc">
     Aspiring Penetration Tester & SOC Analyst from Tamil Nadu, India. 
@@ -541,7 +714,7 @@
   </div>
   <div class="about-grid">
     <div class="about-text reveal">
-      <p>I'm <strong>Balasiva</strong>, a B.Sc Computer Science student at <strong>Madurai Kamaraj University (SBK College)</strong>, Tamil Nadu. I specialize in ethical hacking, penetration testing, and web application security.</p>
+      <p>I'm a <strong>B.Sc Computer Science</strong> student at <strong>Madurai Kamaraj University (SBK College)</strong>, Tamil Nadu. I specialize in ethical hacking, penetration testing, and web application security.</p>
       <p>Currently training at <strong>Innovel Training Institute, Madurai</strong> and actively practicing on platforms like TryHackMe and DVWA. My goal is to become a <strong>Junior Penetration Tester</strong> and Bug Bounty Hunter.</p>
       <p>I believe in <strong>learning by breaking</strong> — understanding how attacks work is the best way to build defenses.</p>
     </div>
@@ -552,9 +725,35 @@
         <li><span>COLLEGE</span><span>SBK College, MKU</span></li>
         <li><span>TRAINING</span><span>Innovel Institute, Madurai</span></li>
         <li><span>EMAIL</span><span>balasivacs13@gmail.com</span></li>
-        <li><span>GITHUB</span><span>github.com/Balasiva</span></li>
+        <li><span>GITHUB</span><span>github.com/balasivacs</span></li>
         <li><span>STATUS</span><span style="color:var(--green)">▶ OPEN TO WORK</span></li>
       </ul>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="section-header reveal">
+    <span class="section-num">02 //</span>
+    <h2 class="section-title">WHAT I DO</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="services-grid">
+    <div class="service-card reveal" style="animation-delay:0.1s">
+      <div class="service-num">01</div>
+      <div class="service-title">VAPT & WEB APP SECURITY</div>
+      <p class="service-desc">Manual and tool-assisted testing for SQL injection, XSS, IDOR, and OWASP Top 10 issues using Burp Suite, DVWA, and PortSwigger labs.</p>
+    </div>
+    <div class="service-card reveal" style="animation-delay:0.2s">
+      <div class="service-num">02</div>
+      <div class="service-title">SOC MONITORING & DETECTION</div>
+      <p class="service-desc">Log analysis, alert triage, and anomaly detection using Wazuh, Splunk, and SIEM fundamentals, backed by TryHackMe SOC Level 1 practice.</p>
+    </div>
+    <div class="service-card reveal" style="animation-delay:0.3s">
+      <div class="service-num">03</div>
+      <div class="service-title">RECON & REPORTING</div>
+      <p class="service-desc">Network reconnaissance, port scanning, and vulnerability documentation using Nmap, theHarvester, and custom Python tooling.</p>
     </div>
   </div>
 </section>
@@ -563,7 +762,7 @@
 <section id="skills">
   <div class="skills-inner">
     <div class="section-header reveal">
-      <span class="section-num">02 //</span>
+      <span class="section-num">03 //</span>
       <h2 class="section-title">SKILLS & TOOLS</h2>
       <div class="section-line"></div>
     </div>
@@ -629,7 +828,7 @@
 <!-- PROJECTS -->
 <section id="projects">
   <div class="section-header reveal">
-    <span class="section-num">03 //</span>
+    <span class="section-num">04 //</span>
     <h2 class="section-title">PROJECTS</h2>
     <div class="section-line"></div>
   </div>
@@ -645,7 +844,7 @@
         <span class="tech-tag">BASH</span>
       </div>
       <div class="project-links">
-        <a href="https://github.com/Balasiva" class="project-link">[ GITHUB → ]</a>
+        <a href="https://github.com/balasivacs" class="project-link">[ GITHUB → ]</a>
       </div>
     </div>
     <div class="project-card reveal" style="animation-delay:0.2s">
@@ -659,7 +858,7 @@
         <span class="tech-tag">BEAUTIFULSOUP</span>
       </div>
       <div class="project-links">
-        <a href="https://github.com/Balasiva" class="project-link">[ GITHUB → ]</a>
+        <a href="https://github.com/balasivacs" class="project-link">[ GITHUB → ]</a>
       </div>
     </div>
     <div class="project-card reveal" style="animation-delay:0.3s">
@@ -683,7 +882,7 @@
 <section id="certs">
   <div class="certs-inner">
     <div class="section-header reveal">
-      <span class="section-num">04 //</span>
+      <span class="section-num">05 //</span>
       <h2 class="section-title">CERTIFICATIONS</h2>
       <div class="section-line"></div>
     </div>
@@ -715,7 +914,7 @@
 <!-- CONTACT -->
 <section id="contact">
   <div class="section-header reveal" style="justify-content:center; text-align:center; flex-direction:column; gap:8px;">
-    <span class="section-num">05 //</span>
+    <span class="section-num">06 //</span>
     <h2 class="section-title">GET IN TOUCH</h2>
   </div>
   <p class="contact-text reveal">
@@ -724,15 +923,36 @@
   <div class="reveal">
     <a href="mailto:balasivacs13@gmail.com" class="contact-email">balasivacs13@gmail.com</a>
   </div>
-  <div class="social-links reveal">
-    <a href="https://github.com/Balasiva" class="social-link" target="_blank">GITHUB</a>
-    <a href="#" class="social-link">LINKEDIN</a>
-    <a href="https://tryhackme.com" class="social-link" target="_blank">TRYHACKME</a>
+  <div class="contact-grid">
+    <a href="mailto:balasivacs13@gmail.com" class="contact-card reveal" style="animation-delay:0.05s">
+      <span class="contact-icon">📧</span>
+      <div><div class="contact-label">EMAIL</div><div class="contact-value">balasivacs13@gmail.com</div></div>
+    </a>
+    <a href="tel:+919080750580" class="contact-card reveal" style="animation-delay:0.1s">
+      <span class="contact-icon">📱</span>
+      <div><div class="contact-label">MOBILE</div><div class="contact-value">+91 90807 50580</div></div>
+    </a>
+    <a href="https://wa.me/919080750580" class="contact-card reveal" target="_blank" style="animation-delay:0.15s">
+      <span class="contact-icon">💬</span>
+      <div><div class="contact-label">WHATSAPP</div><div class="contact-value">Chat Now</div></div>
+    </a>
+    <a href="https://github.com/balasivacs" class="contact-card reveal" target="_blank" style="animation-delay:0.2s">
+      <span class="contact-icon">🐙</span>
+      <div><div class="contact-label">GITHUB</div><div class="contact-value">github.com/balasivacs</div></div>
+    </a>
+    <a href="https://linkedin.com/in/Balasiva" class="contact-card reveal" target="_blank" style="animation-delay:0.25s">
+      <span class="contact-icon">💼</span>
+      <div><div class="contact-label">LINKEDIN</div><div class="contact-value">linkedin.com/in/Balasiva</div></div>
+    </a>
+    <a href="https://instagram.com/majestic._prince" class="contact-card reveal" target="_blank" style="animation-delay:0.3s">
+      <span class="contact-icon">📸</span>
+      <div><div class="contact-label">INSTAGRAM</div><div class="contact-value">@majestic._prince</div></div>
+    </a>
   </div>
 </section>
 
 <footer>
-  &copy; 2026 BALASIVA — BUILT WITH PASSION & KALI LINUX 🐉
+  &copy; 2026 // BUILT WITH PASSION & KALI LINUX 🐉 // root@goat:~#
 </footer>
 
 <script>
